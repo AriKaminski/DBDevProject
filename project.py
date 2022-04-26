@@ -24,6 +24,7 @@ class showData:
             elif(self.menuChoice == "2"):
                 self.menuFunction2()
             elif(self.menuChoice.lower() == "q"):
+                print("Quitting Program")
                 sys.exit()
 
     def menuFunction1(self):
@@ -41,7 +42,7 @@ class showData:
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Phillies.accdb;')
         cursor = conn.cursor()
         cursor.execute(
-            "select  * from Tester where id="+self.id + " order by Number desc")
+            "select  * from Tester where id="+self.id)
         rows = cursor.fetchall()
         for row in rows:
             print(row.ID, "\t", row.LastName, "\t\t", row.FirstName, "\t", row.PlayerNumber)
@@ -66,6 +67,7 @@ class addData:
             elif(self.menuChoice == "2"):
                 self.menuFunction2()
             elif(self.menuChoice.lower() == "q"):
+                print("Quitting Program")
                 sys.exit()
 
 
@@ -92,14 +94,7 @@ class addData:
             print(row.ID, "\t", row.LastName)    
 
 class delData:
-    #
-    # Only marked up, no construction or logic 
-    #
-    #
-    #
-    #
-    #
-    #
+    menuChoice = ""
     def showMenu(self):
 
         while (self.menuChoice != "Q"):
@@ -116,23 +111,28 @@ class delData:
             elif(self.menuChoice == "2"):
                 self.menuFunction2()
             elif(self.menuChoice.lower() == "q"):
+                print("Quitting Program")
                 sys.exit()
 
     def menuFunction1(self):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Phillies.accdb;')
         cursor = conn.cursor()
-        Lname = input("Enter Last Name = ")
-        Fname = input("Enter First Name = ")
-        PNumber = input("Enter number = ")
+        delID = input("Enter ID of Record to delete = ")
         cursor.execute(
-            "INSERT INTO Tester (LastName, FirstName, PlayerNumber) VALUES (" + "'" + Lname + "'" + "," + "'" + Fname + "'" + "," +  "'" + PNumber + " ' " + ")"
+            "DELETE FROM Tester WHERE ID = " + delID
         )
         conn.commit()
-        print(Fname, Lname, "has been added to the table")
+        print("Record Number" + delID + " has been deleted from the table")
     
     def menuFunction2(self):
-        print("Poggers")
+        conn = pyodbc.connect(
+            r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Phillies.accdb;')
+        cursor = conn.cursor()
+        cursor.execute('select * from Tester')
+        rows = cursor.fetchall()
+        for row in rows:
+            print(row.ID, "\t", row.LastName)
 
 
 
@@ -151,6 +151,7 @@ class actionMenu:
             print("3 - Delete Data")
             self.actionMenuChoice = input("Please select an action?: \n")
             if(self.actionMenuChoice.lower() == "q"):
+                print("Quitting Program")
                 sys.exit()
 
             if (self.actionMenuChoice == "1"):
