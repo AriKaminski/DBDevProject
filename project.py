@@ -7,7 +7,7 @@ class showData:
     menuChoice = ""
     id = "12"
 
-    def showMenu(self):
+    def showMenu(self, table):
 
         while (self.menuChoice != "q"):
             print("Show Menu")
@@ -20,32 +20,33 @@ class showData:
             self.menuChoice = input("Please select a query: \n")
 
             if (self.menuChoice == "1"):
-                self.menuFunction1()
+                self.menuFunction1(table)
             elif(self.menuChoice == "2"):
-                self.menuFunction2()
+                self.menuFunction2(table)
             elif(self.menuChoice.lower() == "q"):
                 print("Quitting Program")
                 sys.exit()
 
-    def menuFunction1(self):
+    def menuFunction1(self,table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Phillies.accdb;')
         cursor = conn.cursor()
-        cursor.execute('select * from Tester')
+        cursor.execute('select * from ' + table )
         rows = cursor.fetchall()
         for row in rows:
-            print(row.ID, "\t", row.LastName)
+            print(row[0], row[1], row[2])
 
-    def menuFunction2(self):
+    def menuFunction2(self,table):
         self.id = input("Please provide id: \n")
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Phillies.accdb;')
         cursor = conn.cursor()
         cursor.execute(
-            "select  * from Tester where id="+self.id)
+            "select  * from  " + table + " where id="+self.id)
+        self.id = int(self.id)
         rows = cursor.fetchall()
         for row in rows:
-            print(row.ID, "\t", row.LastName, "\t\t", row.FirstName, "\t", row.PlayerNumber)
+            print(row)
 
         
 class addData:
@@ -140,7 +141,7 @@ class actionMenu:
 
     actionMenuChoice = ""
 
-    def showMenu(self):
+    def showMenu(self, table):
 
         while (self.actionMenuChoice != "Q"):
             print("Action Menu")
@@ -156,7 +157,7 @@ class actionMenu:
 
             if (self.actionMenuChoice == "1"):
                 sd = showData()
-                sd.showMenu()
+                sd.showMenu(table)
             
             if (self.actionMenuChoice == "2"):
                 ad = addData()
@@ -167,12 +168,17 @@ class actionMenu:
                 dd.showMenu()
 
 
-class tableMenu:
+class tableMenu():
+    
 
+    
     menuTable = ""
     tableMenuChoice = ""
 
+    
+
     def showMenu(self):
+        
 
         while (self.tableMenuChoice != "Q"):
             print("Table Menu")
@@ -189,16 +195,17 @@ class tableMenu:
 
             self.tableMenuChoice = input("Please select a table: \n")
 
+
             if (self.tableMenuChoice.lower() == "q"):
                 sys.exit()
             if (self.tableMenuChoice == "1"):
+                table = "Tester"
                 am = actionMenu()
-                am.showMenu()
-                table = "Students"
+                am.showMenu(table)
             elif(self.tableMenuChoice == "2"):
+                table = "Games"
                 am = actionMenu()
-                am.showMenu()
-                table = "Enrollment"
+                am.showMenu(table)
             elif(self.tableMenuChoice == "3"):
                 am = actionMenu()
                 am.showMenu()
@@ -223,6 +230,7 @@ class tableMenu:
                 am = actionMenu()
                 am.showMenu()
                 table = "Buildings"
+
 
 
 tm = tableMenu()
