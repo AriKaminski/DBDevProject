@@ -1,7 +1,6 @@
 import pyodbc
 import sys
 
-
 class showData:
 
     menuChoice = ""
@@ -314,7 +313,6 @@ class updateData:
                 j += 1
         x = int(input("Select = "))
         wField = (field_names[x-1])
-        y = str(x)
         value = input("Enter updated value = ")
 
         conn2 = pyodbc.connect(
@@ -423,8 +421,5 @@ class tableMenu():
                 am = actionMenu()
                 am.showMenu(table)   
                 
-
-
-
 tm = tableMenu()
 tm.showMenu()
