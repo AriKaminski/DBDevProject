@@ -9,22 +9,22 @@ class showData:
 
     def showMenu(self, table):
 
-        while (self.menuChoice != "q"):
-            print("Show Menu")
+        while (self.menuChoice.lower() != "q"):
+            print()
+            print("Print Data Menu")
             print("---------------")
-            print("Q - Quit")
-            print("1 - Show All Records")
+            print("Q - Back to Action Menu")
+            print("1 - Show All " , table, "Records")
             print("2 - Show 1 Record by ID")
 
             self.menuChoice = input("Please select a query: \n")
-
-            if (self.menuChoice == "1"):
+            if(self.menuChoice.lower() == "q"):
+                print("Your working table is [" ,table, "]")              
+            elif (self.menuChoice == "1"):
                 self.menuFunction1(table)
             elif(self.menuChoice == "2"):
                 self.menuFunction2(table)
-            elif(self.menuChoice.lower() == "q"):
-                print("Quitting Program")
-                tableMenu()
+            
 
     def menuFunction1(self,table):
         conn = pyodbc.connect(
@@ -44,6 +44,8 @@ class showData:
             "select  * from  " + table + " where id="+self.id)
         rows = cursor.fetchall()
         for row in rows:
+            field_names = [i[0] for i in cursor.description]
+            print(field_names)
             print(row)
 
         
@@ -51,17 +53,19 @@ class addData:
     menuChoice = " "
     def showMenu(self,table):
 
-        while (self.menuChoice != "Q"):
-            print("Show Menu")
+        while (self.menuChoice.lower() != "q"):
+            print()
+            print("Create Record Menu")
             print("---------------")
-            print("Q - Quit")
-            print("1 - Print all records")
+            print("Q - Back to Action Menu")
+            print("1 - Print all",table," records")
             print("2 - Add a record")
 
 
             self.menuChoice = input("Please select a query: \n")
-
-            if(self.menuChoice == "1"):
+            if(self.menuChoice.lower() == "q"):
+                print("Your working table is [" ,table, "]") 
+            elif(self.menuChoice == "1"):
                 self.menuFunction1(table)
             elif(self.menuChoice == "2"):
                 if(table == "Students"):
@@ -80,9 +84,7 @@ class addData:
                     self.addDepartments(table)
                 elif(table == "Buildings"):
                     self.addBuildings(table)
-            elif(self.menuChoice.lower() == "q"):
-                print("Quitting Program")
-                actionMenu()
+            
 
     def menuFunction1(self,table):
         conn = pyodbc.connect(
@@ -91,7 +93,7 @@ class addData:
         cursor.execute('select * from ' + table)
         rows = cursor.fetchall()
         for row in rows:
-            print(row.ID, ") ", row[1], ", ", row[2])
+            print(row[0], ") ", row[1], ", ", row[2])
 
     def addStudent(self, table):
         conn = pyodbc.connect(
@@ -193,8 +195,8 @@ class addData:
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
-        Fname= input("Enter First Name = ")
-        Lname= input("Enter Last Name = ")
+        Fname= input("Enter Department Name = ")
+        Lname= input("Enter Department = ")
         Department = input("Enter Instructor Department = ")
         
         cursor.execute(
@@ -225,23 +227,26 @@ class delData:
     menuChoice = ""
     def showMenu(self,table):
 
-        while (self.menuChoice != "Q"):
-            print("Show Menu")
+        while (self.menuChoice.lower() != "q"):
+            print()
+            print("Delete Record Menu")
             print("---------------")
-            print("Q - Quit")
-            print("1 - Delete a Record")
-            print("2 - Print all Records")
+            print("Q - Back to Action Menu")
+            print("1 - Print all ", table, "Records")
+            print("2 - Delete a Record")
+            
 
             self.menuChoice = input("Please select a query: \n")
 
-            if(self.menuChoice == "1"):
-                self.menuFunction1(table)
-            elif(self.menuChoice == "2"):
+            if(self.menuChoice.lower() == "q"):
+                print("Your working table is [" ,table, "]") 
+                actionMenu()
+            elif(self.menuChoice == "1"):
                 self.menuFunction2(table)
-            elif(self.menuChoice.lower() == "q"):
-                print("Quitting Program")
-                sys.exit()
-
+            elif(self.menuChoice == "2"):
+                self.menuFunction1(table)
+            
+            
     def menuFunction1(self,table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
@@ -260,8 +265,65 @@ class delData:
         cursor.execute('select * from ' + table)
         rows = cursor.fetchall()
         for row in rows:
-            print(row)
+            print(row[0], row[1], row[2])
 
+class updateData:
+    menuChoice = " "
+    def showMenu(self,table):
+
+        while (self.menuChoice.lower() != "q"):
+            print()
+            print("Update Record Menu")
+            print("---------------")
+            print("Q - Back to Action Menu")
+            print("1 - Print all",table," records")
+            print("2 - Update a record")
+
+            self.menuChoice = input("Please select a query: \n")
+            if(self.menuChoice.lower() == "q"):
+                print("Your working table is [" ,table, "]")
+            elif(self.menuChoice == "1"):
+                self.menuFunction1(table)
+            elif(self.menuChoice == "2"):
+                self.menuFunction2(table)
+
+
+    def menuFunction1(self,table):
+        conn = pyodbc.connect(
+            r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
+        cursor = conn.cursor()
+        cursor.execute('select * from ' + table)
+        rows = cursor.fetchall()
+        for row in rows:
+            print(row[0], row[1], row[2])
+
+    def menuFunction2(self,table):
+        self.id = input("Please provide id: \n")
+        conn = pyodbc.connect(
+            r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
+        cursor = conn.cursor()
+        cursor.execute(
+            "select  * from  " + table + " where id="+self.id)
+        rows = cursor.fetchall()
+        print("Which Field would you like to update? Choices are... ") 
+        for row in rows:
+            field_names = [i[0] for i in cursor.description]
+            j = 1
+            for name in field_names:
+                print(j, name)
+                j += 1
+        x = int(input("Select = "))
+        wField = (field_names[x-1])
+        y = str(x)
+        value = input("Enter updated value = ")
+
+        conn2 = pyodbc.connect(
+            r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
+
+        cursor2 = conn2.cursor()
+        cursor2.execute("UPDATE " + table + " SET " + wField + " = '"+ value + "' WHERE ID = "+ self.id)
+        conn2.commit()
+        print("[",table, "] Record has been updated")
 
 
 class actionMenu:
@@ -271,16 +333,19 @@ class actionMenu:
     def showMenu(self, table):
 
         while (self.actionMenuChoice != "Q"):
+            print()
             print("Action Menu")
             print("---------------")
             print("Q - Quit")
-            print("1 - Dump Data")
-            print("2 - Insert Data")
-            print("3 - Delete Data")
-            self.actionMenuChoice = input("Please select an action?: \n")
+            print("1 - Print Data")
+            print("2 - Create Record")
+            print("3 - Update Record")
+            print("4 - Delete Record")
+
+            self.actionMenuChoice = input("Please select an action: \n")
             if(self.actionMenuChoice.lower() == "q"):
                 print("Quitting Program")
-                tableMenu()
+                sys.exit()
 
             elif (self.actionMenuChoice == "1"):
                 sd = showData()
@@ -289,20 +354,20 @@ class actionMenu:
             elif (self.actionMenuChoice == "2"):
                 ad = addData()
                 ad.showMenu(table)
-
+            
             elif (self.actionMenuChoice == "3"):
+                ud = updateData()
+                ud.showMenu(table)
+
+            elif (self.actionMenuChoice == "4"):
                 dd = delData()
                 dd.showMenu(table)
 
 
 class tableMenu():
-    
 
-    
     menuTable = ""
     tableMenuChoice = ""
-
-    
 
     def showMenu(self):
         
