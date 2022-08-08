@@ -1,5 +1,6 @@
-import pyodbc
 import sys
+import pyodbc
+
 
 class showData:
 
@@ -92,7 +93,7 @@ class addData:
         cursor.execute('select * from ' + table)
         rows = cursor.fetchall()
         for row in rows:
-            print(row[0], ") ", row[1], ", ", row[2])
+            print(row)
 
     def addStudent(self, table):
         conn = pyodbc.connect(
@@ -117,15 +118,15 @@ class addData:
         StuID = input("Enter Student ID = ")
         Major = input("Enter Studnet Major = ")
         Status = input("Enter Student Status = ")
+        cTaken = input("Enter Courses taken = ")
         
         cursor.execute(
-            "INSERT INTO " + table + "(Student_ID, Major, Status) VALUES (" + "'" + StuID + "' ," + "'" + Major + "'" + "," +  "'" + Status +  "' )"
+            "INSERT INTO " + table + "(StudentID, Major, Status, CoursesTaken) VALUES (" + "'" + StuID + "' ," + "'" + Major + "'" + "," +  "'" + Status +  "'" + "'" + cTaken + "'" + ")"
         )
         conn.commit()
         print("Record has been added to the table")
 
-    #Department is a reference / lookup - ask prof
-    #
+
     def addMajors(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
@@ -139,8 +140,6 @@ class addData:
         )
         conn.commit()
         print(Major," has been added to the table")
-    #
-    #
 
     def addCourses(self, table):
         conn = pyodbc.connect(
@@ -156,23 +155,26 @@ class addData:
         conn.commit()
         print(Course," has been added to the table")
 
-    #This sucks, all lookup, ask professor
+    #
     #
     def addClasses(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
         Class= input("Enter Course name = ")
-        Credits= input("Enter Course credits = ")
-        Description = input("Course Description = ")
+        instructor = input("Enter instructor name = ")
+        Room= input("Enter Room Number = ")
+        building = input("Enter building = ")
+        numStudents = input("Number of Students = ")
         
         cursor.execute(
-            "INSERT INTO " + table + "(Course_name, Credits, Description) VALUES (" + "'" + Class + "' ," + "'" + Credits + "'" + "," +  "'" + Description +  "' )"
+            "INSERT INTO " + table + "(Course, Instructor, Room, Building, NumStudents) VALUES (" + "'" + Class + "' ," + "'" + instructor + "'" + "," + "'" + Room + "'" +  "," + "'" + building + "'" + "," +  "'" + numStudents +  "' )"
         )
         conn.commit()
-        print(Class," has been added to the table")
+        print(Class, Room, " has been added to the table")
     #
     #
+
     def addInstructors(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
@@ -187,25 +189,21 @@ class addData:
         conn.commit()
         print(Fname," " , Lname ," has been added to the table")
 
-    
-    #More lookup
-    #
+
     def addDepartments(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
-        Fname= input("Enter Department Name = ")
-        Lname= input("Enter Department = ")
-        Department = input("Enter Instructor Department = ")
+        Bname= input("Enter Department Name = ")
+        depHead= input("Enter Department Head= ")
+        location = input("Enter Department Building = ")
         
         cursor.execute(
-            "INSERT INTO " + table + "(FName, LName, Department) VALUES (" + "'" + Fname + "' ," + "'" + Lname + "'" + "," +  "'" + Department +  "' )"
+            "INSERT INTO " + table + "(Dep_Name, Dep_Head, DepBuilding) VALUES (" + "'" + Bname + "' ," + "'" + depHead + "'" + "," +  "'" + location +  "' )"
         )
         conn.commit()
-        print(Fname," " , Lname ," has been added to the table")
+        print(Bname," has been added to the table")
 
-    #
-    #
 
     def addBuildings(self, table):
         conn = pyodbc.connect(
@@ -361,7 +359,60 @@ class actionMenu:
                 dd = delData()
                 dd.showMenu(table)
 
+            
 
+class showReports:
+    recordSelection = ""
+   
+    def showMenu(self):
+
+        while (self.recordSelection != "Q"):
+            print()
+            print("Report Menu")
+            print("---------------")
+            print("Q - Quit")
+            print("1 - Record 1")
+            print("2 - Record 2")
+
+            recordSelection = input("Select a Report - ")
+            if(recordSelection.lower() == "q"):
+                print("Exiting program")
+                sys.exit()
+            if(recordSelection == "1"):
+                showReports.reports1(self)
+            elif(recordSelection == "2"):
+                showReports.reports2(self)
+            
+
+    def reports1(self):
+        conn = pyodbc.connect(
+                r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
+        cursor = conn.cursor()
+        cursor.execute('''SELECT Buildings.ID, Sum(Classes.NumStudents) AS numPeople FROM Buildings INNER JOIN 
+        Classes ON Buildings.ID = Classes.Building GROUP BY Buildings.ID HAVING (((Buildings.ID)=1));''')
+        rows = cursor.fetchall()
+        for row in rows:
+            print ("Number of students in the west building", row.numPeople)
+        
+    def reports2(self):
+        conn = pyodbc.connect(
+                r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
+        cursor = conn.cursor()
+        cursor.execute('''SELECT Students.ID, Students.LastName, Students.FirstName, Students.Stu_State, Enrollment.Major
+            FROM Students, Majors INNER JOIN Enrollment ON Majors.ID = Enrollment.Major
+            GROUP BY Students.ID, Students.LastName, Students.FirstName, Students.Stu_State, Enrollment.Major
+            HAVING (((Students.Stu_State)='PA') AND ((Enrollment.Major)=1))
+            ORDER BY Students.ID;''')
+        rows = cursor.fetchall()
+        for row in rows:
+            print (row[0], row[1], row[2], row[3])
+
+    def reports3(self):
+        conn = pyodbc.connect(
+                r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
+        cursor = conn.cursor()
+
+        
 class tableMenu():
 
     menuTable = ""
@@ -382,6 +433,7 @@ class tableMenu():
             print("6 - Instructors")
             print("7 - Departments")
             print("8 - Buildings")
+            print("9 - Records")
 
             self.tableMenuChoice = input("Please select a table: \n")
 
@@ -419,7 +471,10 @@ class tableMenu():
             elif(self.tableMenuChoice == "8"):
                 table = "Buildings"
                 am = actionMenu()
-                am.showMenu(table)   
+                am.showMenu(table)
+            elif(self.tableMenuChoice == "9"):
+                sr = showReports()
+                sr.showMenu()
                 
 tm = tableMenu()
 tm.showMenu()
