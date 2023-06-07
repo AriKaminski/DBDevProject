@@ -1,12 +1,15 @@
 import sys
 import pyodbc
 
+# Class for selecting data in working table
+
 
 class showData:
 
     menuChoice = ""
     id = "12"
 
+    # Method to show menu for working table. Q to quit
     def showMenu(self, table):
 
         while (self.menuChoice.lower() != "q"):
@@ -14,28 +17,29 @@ class showData:
             print("Print Data Menu")
             print("---------------")
             print("Q - Back to Action Menu")
-            print("1 - Show All " , table, "Records")
+            print("1 - Show All ", table, "Records")
             print("2 - Show 1 Record by ID")
 
             self.menuChoice = input("Please select a query: \n")
-            if(self.menuChoice.lower() == "q"):
-                print("Your working table is [" ,table, "]")              
+            if (self.menuChoice.lower() == "q"):
+                print("Your working table is [", table, "]")
             elif (self.menuChoice == "1"):
                 self.menuFunction1(table)
-            elif(self.menuChoice == "2"):
+            elif (self.menuChoice == "2"):
                 self.menuFunction2(table)
-            
 
-    def menuFunction1(self,table):
+    # Menu function 1 is to print all records from working table, limited to first 3 elements
+    def menuFunction1(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
-        cursor.execute('select * from ' + table )
+        cursor.execute('select * from ' + table)
         rows = cursor.fetchall()
         for row in rows:
             print(row[0], row[1], row[2])
 
-    def menuFunction2(self,table):
+    # Menu function 2 is to print a specific record from working table, prints all elements
+    def menuFunction2(self, table):
         self.id = input("Please provide id: \n")
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
@@ -48,45 +52,49 @@ class showData:
             print(field_names)
             print(row)
 
-        
+
+# Class for adding data to a specfic table
 class addData:
     menuChoice = " "
-    def showMenu(self,table):
+    # Method that prints menu for each table
+
+    def showMenu(self, table):
 
         while (self.menuChoice.lower() != "q"):
             print()
             print("Create Record Menu")
             print("---------------")
             print("Q - Back to Action Menu")
-            print("1 - Print all",table," records")
+            print("1 - Print all", table, " records")
             print("2 - Add a record")
 
+            # If statement chain for possible table selection
 
             self.menuChoice = input("Please select a query: \n")
-            if(self.menuChoice.lower() == "q"):
-                print("Your working table is [" ,table, "]") 
-            elif(self.menuChoice == "1"):
+            if (self.menuChoice.lower() == "q"):
+                print("Your working table is [", table, "]")
+            elif (self.menuChoice == "1"):
                 self.menuFunction1(table)
-            elif(self.menuChoice == "2"):
-                if(table == "Students"):
+            elif (self.menuChoice == "2"):
+                if (table == "Students"):
                     self.addStudent(table)
-                elif(table == "Enrollment"):
+                elif (table == "Enrollment"):
                     self.addEnrollment(table)
-                elif(table == "Majors"):
+                elif (table == "Majors"):
                     self.addMajors(table)
-                elif(table == "Courses"):
+                elif (table == "Courses"):
                     self.addCourses(table)
-                elif(table == "Classes"):
+                elif (table == "Classes"):
                     self.addClasses(table)
-                elif(table == "Instructors"):
+                elif (table == "Instructors"):
                     self.addInstructors(table)
-                elif(table == "Departments"):
+                elif (table == "Departments"):
                     self.addDepartments(table)
-                elif(table == "Buildings"):
+                elif (table == "Buildings"):
                     self.addBuildings(table)
-            
 
-    def menuFunction1(self,table):
+    # menuFunction1 prints records in working table, used for selecting speific record
+    def menuFunction1(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
@@ -95,6 +103,7 @@ class addData:
         for row in rows:
             print(row)
 
+    # Method to add student to students table
     def addStudent(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
@@ -105,11 +114,12 @@ class addData:
         city = input("Enter Student City = ")
         state = input("Enter Student state = ")
         cursor.execute(
-            "INSERT INTO " + table + "(LastName, FirstName, Stu_Address, Stu_City, Stu_State) VALUES (" + "'" + Lname + "' ," + "'" + Fname + "'" + "," +  "'" + address + "' , '" + 
-             city + "' , '" + state + "' )"
+            "INSERT INTO " + table + "(LastName, FirstName, Stu_Address, Stu_City, Stu_State) VALUES (" + "'" + Lname + "' ," + "'" + Fname + "'" + "," + "'" + address + "' , '" +
+            city + "' , '" + state + "' )"
         )
         conn.commit()
         print(Fname, Lname, "has been added to the table")
+    # Method to add enrollment to enrollment table
 
     def addEnrollment(self, table):
         conn = pyodbc.connect(
@@ -119,110 +129,123 @@ class addData:
         Major = input("Enter Studnet Major = ")
         Status = input("Enter Student Status = ")
         cTaken = input("Enter Courses taken = ")
-        
+
         cursor.execute(
-            "INSERT INTO " + table + "(StudentID, Major, Status, CoursesTaken) VALUES (" + "'" + StuID + "' ," + "'" + Major + "'" + "," +  "'" + Status +  "'" + "'" + cTaken + "'" + ")"
+            "INSERT INTO " + table + "(StudentID, Major, Status, CoursesTaken) VALUES (" + "'" +
+            StuID + "' ," + "'" + Major + "'" + "," + "'" +
+            Status + "'" + "'" + cTaken + "'" + ")"
         )
         conn.commit()
         print("Record has been added to the table")
-
+    # Method to add major to majors table
 
     def addMajors(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
-        Major= input("Enter Major Name = ")
+        Major = input("Enter Major Name = ")
         Department = input("Enter Student Department = ")
         Transfer = input("Transferrable (Yes/No) = ")
-        
+
         cursor.execute(
-            "INSERT INTO " + table + "(Major_Name, Department, Transfer) VALUES (" + "'" + Major + "' ," + "'" + Department + "'" + "," +  "'" + Transfer +  "' )"
+            "INSERT INTO " + table + "(Major_Name, Department, Transfer) VALUES (" +
+            "'" + Major + "' ," + "'" + Department + "'" + "," + "'" + Transfer + "' )"
         )
         conn.commit()
-        print(Major," has been added to the table")
+        print(Major, " has been added to the table")
+    # Method to add course to courses table
 
     def addCourses(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
-        Course= input("Enter Course name = ")
-        Credits= input("Enter Course credits = ")
+        Course = input("Enter Course name = ")
+        Credits = input("Enter Course credits = ")
         Description = input("Course Description = ")
-        
+
         cursor.execute(
-            "INSERT INTO " + table + "(Course_name, Credits, Description) VALUES (" + "'" + Course + "' ," + "'" + Credits + "'" + "," +  "'" + Description +  "' )"
+            "INSERT INTO " + table + "(Course_name, Credits, Description) VALUES (" +
+            "'" + Course + "' ," + "'" + Credits + "'" + "," + "'" + Description + "' )"
         )
         conn.commit()
-        print(Course," has been added to the table")
+        print(Course, " has been added to the table")
 
     #
-    #
+    # Method to add class to classes table
     def addClasses(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
-        Class= input("Enter Course name = ")
+        Class = input("Enter Course name = ")
         instructor = input("Enter instructor name = ")
-        Room= input("Enter Room Number = ")
+        Room = input("Enter Room Number = ")
         building = input("Enter building = ")
         numStudents = input("Number of Students = ")
-        
+
         cursor.execute(
-            "INSERT INTO " + table + "(Course, Instructor, Room, Building, NumStudents) VALUES (" + "'" + Class + "' ," + "'" + instructor + "'" + "," + "'" + Room + "'" +  "," + "'" + building + "'" + "," +  "'" + numStudents +  "' )"
+            "INSERT INTO " + table + "(Course, Instructor, Room, Building, NumStudents) VALUES (" + "'" + Class + "' ," +
+            "'" + instructor + "'" + "," + "'" + Room + "'" + "," +
+            "'" + building + "'" + "," + "'" + numStudents + "' )"
         )
         conn.commit()
         print(Class, Room, " has been added to the table")
-    #
-    #
 
+    # Method to add instructor to instructors table
     def addInstructors(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
-        Fname= input("Enter First Name = ")
-        Lname= input("Enter Last Name = ")
+        Fname = input("Enter First Name = ")
+        Lname = input("Enter Last Name = ")
         Department = input("Enter Instructor Department = ")
-        
+
         cursor.execute(
-            "INSERT INTO " + table + "(FName, LName, Department) VALUES (" + "'" + Fname + "' ," + "'" + Lname + "'" + "," +  "'" + Department +  "' )"
+            "INSERT INTO " + table + "(FName, LName, Department) VALUES (" + "'" +
+            Fname + "' ," + "'" + Lname + "'" + "," + "'" + Department + "' )"
         )
         conn.commit()
-        print(Fname," " , Lname ," has been added to the table")
-
+        print(Fname, " ", Lname, " has been added to the table")
+    # Method to add departments to departments table
 
     def addDepartments(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
-        Bname= input("Enter Department Name = ")
-        depHead= input("Enter Department Head= ")
+        Bname = input("Enter Department Name = ")
+        depHead = input("Enter Department Head= ")
         location = input("Enter Department Building = ")
-        
+
         cursor.execute(
-            "INSERT INTO " + table + "(Dep_Name, Dep_Head, DepBuilding) VALUES (" + "'" + Bname + "' ," + "'" + depHead + "'" + "," +  "'" + location +  "' )"
+            "INSERT INTO " + table + "(Dep_Name, Dep_Head, DepBuilding) VALUES (" +
+            "'" + Bname + "' ," + "'" + depHead + "'" + "," + "'" + location + "' )"
         )
         conn.commit()
-        print(Bname," has been added to the table")
-
+        print(Bname, " has been added to the table")
+    # Method to add buildings to buildings table
 
     def addBuildings(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
-        BName= input("Enter Building Name = ")
-        BDep= input("Enter Building Department = ")
+        BName = input("Enter Building Name = ")
+        BDep = input("Enter Building Department = ")
         BLoc = input("Enter Building Location = ")
-        
+
         cursor.execute(
-            "INSERT INTO " + table + "(Building_Name, Building_Department, Building_Location) VALUES (" + "'" + BName + "' ," + "'" + BDep + "'" + "," +  "'" + BLoc +  "' )"
+            "INSERT INTO " + table + "(Building_Name, Building_Department, Building_Location) VALUES (" +
+            "'" + BName + "' ," + "'" + BDep + "'" + "," + "'" + BLoc + "' )"
         )
         conn.commit()
         print(BName, " has been added to the table")
 
+# The delete class works by selecting specific records and deleting them
+
 
 class delData:
     menuChoice = ""
-    def showMenu(self,table):
+    # Menu method to print selections
+
+    def showMenu(self, table):
 
         while (self.menuChoice.lower() != "q"):
             print()
@@ -231,31 +254,19 @@ class delData:
             print("Q - Back to Action Menu")
             print("1 - Print all ", table, "Records")
             print("2 - Delete a Record")
-            
 
             self.menuChoice = input("Please select a query: \n")
 
-            if(self.menuChoice.lower() == "q"):
-                print("Your working table is [" ,table, "]") 
+            if (self.menuChoice.lower() == "q"):
+                print("Your working table is [", table, "]")
                 actionMenu()
-            elif(self.menuChoice == "1"):
+            elif (self.menuChoice == "1"):
                 self.menuFunction2(table)
-            elif(self.menuChoice == "2"):
+            elif (self.menuChoice == "2"):
                 self.menuFunction1(table)
-            
-            
-    def menuFunction1(self,table):
-        conn = pyodbc.connect(
-            r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
-        cursor = conn.cursor()
-        delID = input("Enter ID of Record to delete = ")
-        cursor.execute(
-            "DELETE FROM "+ table + " WHERE ID = " + delID
-        )
-        conn.commit()
-        print("Record Number " + delID + " has been deleted from the table")
-    
-    def menuFunction2(self,table):
+
+    # menuFunction1 prints limited data from all records
+    def menuFunction1(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
@@ -264,28 +275,42 @@ class delData:
         for row in rows:
             print(row[0], row[1], row[2])
 
+    # menuFunction2 deletes a specfic record
+    def menuFunction2(self, table):
+        conn = pyodbc.connect(
+            r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
+        cursor = conn.cursor()
+        delID = input("Enter ID of Record to delete = ")
+        cursor.execute(
+            "DELETE FROM " + table + " WHERE ID = " + delID
+        )
+        conn.commit()
+        print("Record Number " + delID + " has been deleted from the table")
+
+
 class updateData:
     menuChoice = " "
-    def showMenu(self,table):
+
+    def showMenu(self, table):
 
         while (self.menuChoice.lower() != "q"):
             print()
             print("Update Record Menu")
             print("---------------")
             print("Q - Back to Action Menu")
-            print("1 - Print all",table," records")
+            print("1 - Print all", table, " records")
             print("2 - Update a record")
 
             self.menuChoice = input("Please select a query: \n")
-            if(self.menuChoice.lower() == "q"):
-                print("Your working table is [" ,table, "]")
-            elif(self.menuChoice == "1"):
+            if (self.menuChoice.lower() == "q"):
+                print("Your working table is [", table, "]")
+            elif (self.menuChoice == "1"):
                 self.menuFunction1(table)
-            elif(self.menuChoice == "2"):
+            elif (self.menuChoice == "2"):
                 self.menuFunction2(table)
+    # menuFunction1 prints limited data from all records
 
-
-    def menuFunction1(self,table):
+    def menuFunction1(self, table):
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
@@ -293,8 +318,9 @@ class updateData:
         rows = cursor.fetchall()
         for row in rows:
             print(row[0], row[1], row[2])
+    # menuFunction2 is used to select a specific record, then a specific field, which is then updated by user.
 
-    def menuFunction2(self,table):
+    def menuFunction2(self, table):
         self.id = input("Please provide id: \n")
         conn = pyodbc.connect(
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
@@ -302,7 +328,7 @@ class updateData:
         cursor.execute(
             "select  * from  " + table + " where id="+self.id)
         rows = cursor.fetchall()
-        print("Which Field would you like to update? Choices are... ") 
+        print("Which Field would you like to update? Choices are... ")
         for row in rows:
             field_names = [i[0] for i in cursor.description]
             j = 1
@@ -317,9 +343,12 @@ class updateData:
             r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
 
         cursor2 = conn2.cursor()
-        cursor2.execute("UPDATE " + table + " SET " + wField + " = '"+ value + "' WHERE ID = "+ self.id)
+        cursor2.execute("UPDATE " + table + " SET " + wField +
+                        " = '" + value + "' WHERE ID = " + self.id)
         conn2.commit()
-        print("[",table, "] Record has been updated")
+        print("[", table, "] Record has been updated")
+
+# The actionMenu class is where the user selects desired action for the working table.
 
 
 class actionMenu:
@@ -339,18 +368,18 @@ class actionMenu:
             print("4 - Delete Record")
 
             self.actionMenuChoice = input("Please select an action: \n")
-            if(self.actionMenuChoice.lower() == "q"):
+            if (self.actionMenuChoice.lower() == "q"):
                 print("Quitting Program")
                 sys.exit()
 
             elif (self.actionMenuChoice == "1"):
                 sd = showData()
                 sd.showMenu(table)
-            
+
             elif (self.actionMenuChoice == "2"):
                 ad = addData()
                 ad.showMenu(table)
-            
+
             elif (self.actionMenuChoice == "3"):
                 ud = updateData()
                 ud.showMenu(table)
@@ -359,11 +388,13 @@ class actionMenu:
                 dd = delData()
                 dd.showMenu(table)
 
-            
+# The showReports class presents the user with possible report selections
+
 
 class showReports:
     recordSelection = ""
-   
+    # Menu to show all possible report selections
+
     def showMenu(self):
 
         while (self.recordSelection != "Q"):
@@ -375,28 +406,29 @@ class showReports:
             print("2 - Record 2")
 
             recordSelection = input("Select a Report - ")
-            if(recordSelection.lower() == "q"):
+            if (recordSelection.lower() == "q"):
                 print("Exiting program")
                 sys.exit()
-            if(recordSelection == "1"):
+            if (recordSelection == "1"):
                 showReports.reports1(self)
-            elif(recordSelection == "2"):
+            elif (recordSelection == "2"):
                 showReports.reports2(self)
-            
+    # First report that prints the number of students in the west building
 
     def reports1(self):
         conn = pyodbc.connect(
-                r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
+            r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
         cursor.execute('''SELECT Buildings.ID, Sum(Classes.NumStudents) AS numPeople FROM Buildings INNER JOIN 
         Classes ON Buildings.ID = Classes.Building GROUP BY Buildings.ID HAVING (((Buildings.ID)=1));''')
         rows = cursor.fetchall()
         for row in rows:
-            print ("Number of students in the west building", row.numPeople)
-        
+            print("Number of students in the west building", row.numPeople)
+    # Second report that prints the students who are enrolled in Football from PA
+
     def reports2(self):
         conn = pyodbc.connect(
-                r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
+            r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
         cursor.execute('''SELECT Students.ID, Students.LastName, Students.FirstName, Students.Stu_State, Enrollment.Major
             FROM Students, Majors INNER JOIN Enrollment ON Majors.ID = Enrollment.Major
@@ -405,21 +437,23 @@ class showReports:
             ORDER BY Students.ID;''')
         rows = cursor.fetchall()
         for row in rows:
-            print (row[0], row[1], row[2], row[3])
+            print(row[0], row[1], row[2], row[3])
+    # Unfinished report 3
 
     def reports3(self):
         conn = pyodbc.connect(
-                r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
+            r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\devar\Documents\Database1.accdb;')
         cursor = conn.cursor()
 
-        
+# table menu is presented only once at the start of the program, selects working table
+
+
 class tableMenu():
 
     menuTable = ""
     tableMenuChoice = ""
 
     def showMenu(self):
-        
 
         while (self.tableMenuChoice != "Q"):
             print("Table Menu")
@@ -437,44 +471,44 @@ class tableMenu():
 
             self.tableMenuChoice = input("Please select a table: \n")
 
-
             if (self.tableMenuChoice.lower() == "q"):
                 sys.exit()
             if (self.tableMenuChoice == "1"):
                 table = "Students"
                 am = actionMenu()
                 am.showMenu(table)
-            elif(self.tableMenuChoice == "2"):
+            elif (self.tableMenuChoice == "2"):
                 table = "Enrollment"
                 am = actionMenu()
                 am.showMenu(table)
-            elif(self.tableMenuChoice == "3"):
+            elif (self.tableMenuChoice == "3"):
                 table = "Majors"
                 am = actionMenu()
-                am.showMenu(table)            
-            elif(self.tableMenuChoice == "4"):
+                am.showMenu(table)
+            elif (self.tableMenuChoice == "4"):
                 table = "Courses"
                 am = actionMenu()
-                am.showMenu(table)               
-            elif(self.tableMenuChoice == "5"):
+                am.showMenu(table)
+            elif (self.tableMenuChoice == "5"):
                 table = "Classes"
                 am = actionMenu()
-                am.showMenu(table)                
-            elif(self.tableMenuChoice == "6"):
+                am.showMenu(table)
+            elif (self.tableMenuChoice == "6"):
                 table = "Instructors"
                 am = actionMenu()
-                am.showMenu(table)   
-            elif(self.tableMenuChoice == "7"):
+                am.showMenu(table)
+            elif (self.tableMenuChoice == "7"):
                 table = "Departments"
                 am = actionMenu()
-                am.showMenu(table)             
-            elif(self.tableMenuChoice == "8"):
+                am.showMenu(table)
+            elif (self.tableMenuChoice == "8"):
                 table = "Buildings"
                 am = actionMenu()
                 am.showMenu(table)
-            elif(self.tableMenuChoice == "9"):
+            elif (self.tableMenuChoice == "9"):
                 sr = showReports()
                 sr.showMenu()
-                
+
+
 tm = tableMenu()
 tm.showMenu()
